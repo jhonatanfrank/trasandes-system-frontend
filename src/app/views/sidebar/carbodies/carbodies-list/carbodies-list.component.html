@@ -1,0 +1,191 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+    [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+    [class.fade]="true" role="alert">
+
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ t.message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="container-fluid px-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0">Carrocerías</h3>
+      <small class="text-muted">
+        Total: {{ carBodiesData?.total || 0 }} registros
+      </small>
+    </div>
+
+    <a class="btn btn-primary btn-sm shadow-sm" [routerLink]="['/carbodies/create']">
+      <i class="bi bi-plus-lg me-1"></i> Nueva Carrocería
+    </a>
+
+  </div>
+
+  <!-- Card -->
+  <div class="card border-0 rounded-3">
+    <div class="card-body">
+
+      <!-- Paginación -->
+      <nav *ngIf="carBodiesData" class="mt-4 mb-4">
+        <ul class="pagination pagination-sm justify-content-center">
+
+          <li class="page-item" [class.disabled]="carBodiesData.current_page === 1">
+            <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">
+              « Primera
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let link of carBodiesData.links" [class.active]="link.active"
+            [class.disabled]="!link.url">
+            <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+              [innerHTML]="link.label">
+            </a>
+          </li>
+
+          <li class="page-item" [class.disabled]="carBodiesData.current_page === carBodiesData.last_page">
+            <a class="page-link" href="#" (click)="goToPage(carBodiesData.last_page); $event.preventDefault()">
+              Última »
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Tabla -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+
+          <thead class="table text-uppercase small">
+            <tr>
+              <th>#</th>
+              <th>Placa</th>
+              <th>Capacidad</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Creado</th>
+              <th>Actualizado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <!-- Loading -->
+            <tr *ngIf="loading">
+              <td colspan="10" class="py-5">
+                <c-spinner color="primary"></c-spinner>
+                <div class="text-muted mt-2">Cargando carrocerías...</div>
+              </td>
+            </tr>
+
+            <!-- Data -->
+            <ng-container *ngIf="!loading && carbodies.length > 0">
+              <tr *ngFor="let carbody of carbodies" class="table-row">
+
+                <td class="fw-semibold">{{ carbody.id }}</td>
+
+                <td>
+                  <span class="badge bg-light text-dark border">
+                    {{ carbody.placa }}
+                  </span>
+                </td>
+
+                <td>{{ carbody.capacidad || '-' }}</td>
+                <td>{{ carbody.descripcion || '-' }}</td>
+                <td>
+                  <span class="badge text-uppercase" [ngClass]="carbody.estado_carbody === 'Activo'
+                    ? 'bg-success'
+                    : carbody.estado_carbody === 'Inactivo'
+                      ? 'bg-danger'
+                      : 'bg-secondary'">
+
+                    {{ carbody.estado_carbody || '-' }}
+
+                  </span>
+                </td>
+                <td class="text-muted small">
+                  {{ carbody.created_at | date:'short' }}
+                </td>
+                <td class="text-muted small">
+                  {{ carbody.updated_at | date:'short' }}
+                </td>
+
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm" role="group">
+
+                    <!-- Ver -->
+                    <a type="button" class="btn btn-outline-secondary" title="Ver"
+                      [routerLink]="['/carbodies/read', carbody.id]">
+                      <i class="bi bi-eye"></i>
+                    </a>
+
+                    <!-- Editar -->
+                    <a type="button" class="btn btn-outline-primary" title="Editar"
+                      [routerLink]="['/carbodies/update', carbody.id]">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <!-- Eliminar -->
+                    <a type="button" class="btn btn-outline-danger btn-delete" title="Eliminar"
+                      (click)="deleteCarbody(carbody.id.toString())">
+                      <i class="bi bi-trash"></i>
+                    </a>
+
+                  </div>
+                </td>
+
+              </tr>
+            </ng-container>
+
+            <!-- Empty -->
+            <tr *ngIf="!loading && carbodies.length === 0">
+              <td colspan="10" class="py-5 text-center">
+                <i class="bi bi-inbox fs-2 text-muted"></i>
+                <div class="mt-2 text-muted">No hay carrocerías registradas</div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <nav *ngIf="carBodiesData" class="mt-4 mb-4">
+        <ul class="pagination pagination-sm justify-content-center">
+
+          <li class="page-item" [class.disabled]="carBodiesData.current_page === 1">
+            <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">
+              « Primera
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let link of carBodiesData.links" [class.active]="link.active"
+            [class.disabled]="!link.url">
+            <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+              [innerHTML]="link.label">
+            </a>
+          </li>
+
+          <li class="page-item" [class.disabled]="carBodiesData.current_page === carBodiesData.last_page">
+            <a class="page-link" href="#" (click)="goToPage(carBodiesData.last_page); $event.preventDefault()">
+              Última »
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+</div>

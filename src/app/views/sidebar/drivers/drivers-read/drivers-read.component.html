@@ -1,0 +1,200 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+    [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+    [class.fade]="true" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ t.message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
+  <div *ngIf="!loading && driver_data" class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-3">
+        <h3 class="fw-bold mb-0 d-flex align-items-center">
+          <i class="bi bi-person-badge text-primary me-2"></i>
+          {{ driver_data.user.name }}
+        </h3>
+      </div>
+      <small class="text-muted">
+        Detalle completo del conductor
+      </small>
+    </div>
+    <a class="btn btn-primary btn-sm shadow-sm" [routerLink]="['/drivers/list']">
+      <i class="bi bi-arrow-left me-1"></i> Volver
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <c-spinner color="primary"></c-spinner>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-3 mb-4" *ngIf="!loading && driver_data">
+    <div class="card-header bg-white border-bottom">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info">
+            <i class="bi bi-info-circle me-1"></i> Información
+          </button>
+        </li>
+        <!-- Estado -->
+        <li class="nav-item ms-auto me-2">
+
+          <span class="badge px-3 py-2 fw-semibold" [ngClass]="{
+          'bg-danger text-white': getDiasVencidos(driver_data.vencimiento_licencia ?? null) < 0,
+          'bg-warning text-dark': getDiasVencidos(driver_data.vencimiento_licencia ?? null) === 0 || getDiasVencidos(driver_data.vencimiento_licencia ?? null) <= 30,
+          'bg-success': getDiasVencidos(driver_data.vencimiento_licencia ?? null) > 30
+        }">
+            {{
+            getDiasVencidos(driver_data.vencimiento_licencia ?? null) < 0 ? 'LICENCIA VENCIDA HACE ' +
+              getDiasVencidosAbs(driver_data.vencimiento_licencia ?? null) + ' DÍAS' :
+              getDiasVencidos(driver_data.vencimiento_licencia ?? null)===0 ? 'LICENCIA VENCE HOY' :
+              getDiasVencidos(driver_data.vencimiento_licencia ?? null) <=30 ? 'LICENCIA VENCE EN ' +
+              getDiasVencidos(driver_data.vencimiento_licencia ?? null) + ' días' : 'LICENCIA VIGENTE' }} </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="info">
+          <div class="row g-4">
+
+            <!-- NOMBRE -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nombre</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-person text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.user.name" disabled>
+              </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Correo</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-envelope text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.user.email" disabled>
+              </div>
+            </div>
+
+            <!-- LICENCIA -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Licencia</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-card-text text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.licencia" disabled>
+              </div>
+            </div>
+
+            <!-- NÚMERO LICENCIA -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Número Licencia</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-hash text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.numero_licencia" disabled>
+              </div>
+            </div>
+
+            <!-- VENCIMIENTO -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Vencimiento Licencia</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-calendar-x"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.vencimiento_licencia | date:'dd/MM/yyyy'"
+                  disabled>
+              </div>
+            </div>
+
+            <!-- 🔥 NUEVO: ESTADO LICENCIA (DIAS VENCIDOS) -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Estado Licencia</label>
+              <div class="input-group shadow-sm">
+
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-clock-history text-primary"></i>
+                </span>
+
+                <input type="text" class="form-control fw-bold" [ngClass]="{
+                    'text-success': getDiasVencidos(driver_data.vencimiento_licencia) > 30,
+                    'text-warning': getDiasVencidos(driver_data.vencimiento_licencia) <= 30 && getDiasVencidos(driver_data.vencimiento_licencia) >= 0,
+                    'text-danger': getDiasVencidos(driver_data.vencimiento_licencia) < 0
+                  }" [value]="
+                      getDiasVencidos(driver_data.vencimiento_licencia) < 0
+                        ? '🔴 Licencia vencida hace ' + getDiasVencidosAbs(driver_data.vencimiento_licencia) + ' días'
+                        : getDiasVencidos(driver_data.vencimiento_licencia) === 0
+                          ? '🟡 Vence hoy'
+                          : getDiasVencidos(driver_data.vencimiento_licencia) <= 30
+                            ? '🟡 Vence en ' + getDiasVencidos(driver_data.vencimiento_licencia) + ' días'
+                            : '🟢 Vigente'
+                    " disabled>
+              </div>
+            </div>
+
+            <!-- EXAMEN MÉDICO -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Examen médico</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-heart-pulse text-primary"></i>
+                </span>
+                <input type="text" class="form-control"
+                  [value]="driver_data.examen_medico_al_dia ? 'Al día' : 'Vencido'" disabled>
+              </div>
+            </div>
+
+            <!-- ESTADO -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Estado</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-info-circle text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.estado_conductor" disabled>
+              </div>
+            </div>
+
+            <!-- FECHAS -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Creado</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-calendar-plus text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.created_at | date:'dd/MM/yyyy HH:mm'"
+                  disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Actualizado</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-calendar-check text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="driver_data.updated_at | date:'dd/MM/yyyy HH:mm'"
+                  disabled>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

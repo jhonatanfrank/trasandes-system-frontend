@@ -1,0 +1,113 @@
+<div *ngIf="rolesData" class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold mb-0">Roles y permisos</h3>
+        <small class="text-muted">
+            Total: {{ rolesData.total || 0 }} registros
+        </small>
+    </div>
+
+    <a class="btn btn-primary btn-sm shadow-sm" [routerLink]="['/roles/create']">
+        <i class="bi bi-plus-lg me-1"></i> Nuevo Role
+    </a>
+
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-3">
+
+        <nav *ngIf="rolesData">
+            <ul class="pagination pagination-sm justify-content-center mt-3">
+                <li class="page-item" [class.disabled]="rolesData.current_page === 1">
+                    <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">Primera</a>
+                </li>
+                <li class="page-item" *ngFor="let link of rolesData.links" [class.active]="link.active"
+                    [class.disabled]="!link.url">
+                    <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+                        [innerHTML]="link.label"></a>
+                </li>
+                <li class="page-item" [class.disabled]="rolesData.current_page === rolesData.last_page">
+                    <a class="page-link" href="#"
+                        (click)="goToPage(rolesData.last_page); $event.preventDefault()">Última</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="table-responsive">
+            <table cTable hover class="mt-3">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col">Nombre del Role</th>
+                        <th scope="col">Permisos</th>
+                        <th scope="col" class="text-center">Creado</th>
+                        <th scope="col" class="text-center">Actualizado</th>
+                        <th *ngIf="canReadRole || canUpdateRole || canDeleteRole" scope="col" class="text-center">
+                            Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngIf="loading">
+                        <td colspan="7" class="text-center text-muted p-5">
+                            <c-spinner color="primary"></c-spinner>
+                        </td>
+                    </tr>
+
+                    <ng-container *ngIf="!loading && roles.length > 0">
+                        <tr *ngFor="let role of roles" tabindex="0">
+                            <td class="text-center">{{ role.id }}</td>
+                            <td>{{ role.name }}</td>
+                            <td>
+                                <div *ngFor="let module of role.permissions" class="mb-1 small">
+                                    <span class="me-1">{{ module.module }}:</span>
+                                    <ng-container *ngFor="let perm of module.permissions">
+                                        <span class="badge me-1"
+                                            [ngClass]="perm.assigned ? 'bg-primary' : 'bg-secondary'">
+                                            {{ perm.display_name }}
+                                        </span>
+                                    </ng-container>
+                                </div>
+                            </td>
+                            <td class="text-center">{{ role.created_at }}</td>
+                            <td class="text-center">{{ role.updated_at }}</td>
+                            <td class="text-center">
+                                <c-button-group aria-label="Basic outlined example" role="group">
+                                    <a *ngIf="canReadRole" cButton color="primary" size="sm" variant="outline"
+                                        [routerLink]="['/roles/read', role.id]">
+                                        <c-icon name="cil-align-left"></c-icon>
+                                    </a>
+                                    <a *ngIf="canUpdateRole" cButton color="primary" size="sm" variant="outline"
+                                        [routerLink]="['/roles/update', role.id]">
+                                        <c-icon name="cil-pencil"></c-icon>
+                                    </a>
+                                    <a *ngIf="canDeleteRole" type="button" class="btn btn-outline-danger btn-sm btn-delete"
+                                        title="Eliminar" (click)="deleteRoles(role.id?.toString() || '')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </c-button-group>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+
+        <nav *ngIf="rolesData">
+            <ul class="pagination pagination-sm justify-content-center mt-3">
+                <li class="page-item" [class.disabled]="rolesData.current_page === 1">
+                    <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">Primera</a>
+                </li>
+                <li class="page-item" *ngFor="let link of rolesData.links" [class.active]="link.active"
+                    [class.disabled]="!link.url">
+                    <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+                        [innerHTML]="link.label"></a>
+                </li>
+                <li class="page-item" [class.disabled]="rolesData.current_page === rolesData.last_page">
+                    <a class="page-link" href="#"
+                        (click)="goToPage(rolesData.last_page); $event.preventDefault()">Última</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</div>

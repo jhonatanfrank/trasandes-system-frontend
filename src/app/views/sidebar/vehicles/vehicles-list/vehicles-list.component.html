@@ -1,0 +1,202 @@
+<!-- Toast Bootstrap -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+    [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+    [class.fade]="true" role="alert">
+
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ t.message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="container-fluid px-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0">Vehículos</h3>
+      <small class="text-muted">
+        Total: {{ vehiclesData?.total || 0 }} registros
+      </small>
+    </div>
+
+    <a class="btn btn-primary btn-sm shadow-sm" [routerLink]="['/vehicles/create']">
+      <i class="bi bi-plus-lg me-1"></i> Nuevo Vehículo
+    </a>
+
+  </div>
+
+  <!-- Card -->
+  <div class="card border-0 rounded-3">
+    <div class="card-body">
+
+      <!-- Paginación -->
+      <nav *ngIf="vehiclesData" class="mt-4 mb-4">
+        <ul class="pagination pagination-sm justify-content-center">
+
+          <li class="page-item" [class.disabled]="vehiclesData.current_page === 1">
+            <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">
+              « Primera
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let link of vehiclesData.links" [class.active]="link.active"
+            [class.disabled]="!link.url">
+            <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+              [innerHTML]="link.label">
+            </a>
+          </li>
+
+          <li class="page-item" [class.disabled]="vehiclesData.current_page === vehiclesData.last_page">
+            <a class="page-link" href="#" (click)="goToPage(vehiclesData.last_page); $event.preventDefault()">
+              Última »
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Tabla -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+
+          <thead class="table text-uppercase small">
+            <tr>
+              <th>#</th>
+              <th>Placa</th>
+              <th>Tipo</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Año</th>
+              <th>GPS</th>
+              <th>Estado</th>
+              <th>Creado</th>
+              <th>Actualizado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <!-- Loading -->
+            <tr *ngIf="loading">
+              <td colspan="10" class="py-5">
+                <c-spinner color="primary"></c-spinner>
+                <div class="text-muted mt-2">Cargando vehículos...</div>
+              </td>
+            </tr>
+
+            <!-- Data -->
+            <ng-container *ngIf="!loading && vehicles.length > 0">
+              <tr *ngFor="let vehicle of vehicles" class="table-row">
+
+                <td class="fw-semibold">{{ vehicle.id }}</td>
+
+                <td>
+                  <span class="badge bg-light text-dark border">
+                    {{ vehicle.placa }}
+                  </span>
+                </td>
+
+                <td>{{ vehicle.tipo || '-' }}</td>
+                <td>{{ vehicle.marca || '-' }}</td>
+                <td>{{ vehicle.modelo || '-' }}</td>
+                <td>{{ vehicle.anio || '-' }}</td>
+
+                <td>
+                  <span class="badge"
+                    [ngClass]="vehicle.gps ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                    <i class="bi" [ngClass]="vehicle.gps ? 'bi-check-circle' : 'bi-x-circle'"></i>
+                    {{ vehicle.gps ? ' Sí' : ' No' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="vehicle.estado_vehiculo === 'Activo' ? 'bg-success' : 'bg-danger'">
+
+                    {{ vehicle.estado_vehiculo }}
+
+                  </span>
+                </td>
+
+                <td class="text-muted small">
+                  {{ vehicle.created_at | date:'short' }}
+                </td>
+
+                <td class="text-muted small">
+                  {{ vehicle.updated_at | date:'short' }}
+                </td>
+
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm" role="group">
+
+                    <!-- Ver -->
+                    <a type="button" class="btn btn-outline-secondary" title="Ver"
+                      [routerLink]="['/vehicles/read', vehicle.id]">
+                      <i class="bi bi-eye"></i>
+                    </a>
+
+                    <!-- Editar -->
+                    <a type="button" class="btn btn-outline-primary" title="Editar"
+                      [routerLink]="['/vehicles/update', vehicle.id]">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <!-- Eliminar -->
+                    <a type="button" class="btn btn-outline-danger btn-delete" title="Eliminar"
+                      (click)="deleteVehicle(vehicle.id.toString())">
+                      <i class="bi bi-trash"></i>
+                    </a>
+
+                  </div>
+                </td>
+
+              </tr>
+            </ng-container>
+
+            <!-- Empty -->
+            <tr *ngIf="!loading && vehicles.length === 0">
+              <td colspan="10" class="py-5 text-center">
+                <i class="bi bi-inbox fs-2 text-muted"></i>
+                <div class="mt-2 text-muted">No hay vehículos registrados</div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <nav *ngIf="vehiclesData" class="mt-4 mb-4">
+        <ul class="pagination pagination-sm justify-content-center">
+
+          <li class="page-item" [class.disabled]="vehiclesData.current_page === 1">
+            <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">
+              « Primera
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let link of vehiclesData.links" [class.active]="link.active"
+            [class.disabled]="!link.url">
+            <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+              [innerHTML]="link.label">
+            </a>
+          </li>
+
+          <li class="page-item" [class.disabled]="vehiclesData.current_page === vehiclesData.last_page">
+            <a class="page-link" href="#" (click)="goToPage(vehiclesData.last_page); $event.preventDefault()">
+              Última »
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+</div>

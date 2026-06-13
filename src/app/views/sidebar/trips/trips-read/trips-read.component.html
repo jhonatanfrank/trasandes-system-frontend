@@ -1,0 +1,308 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+    [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+    [class.fade]="true" role="alert">
+
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ t.message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
+
+  <div *ngIf="!loading && trip_data" class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0 d-flex align-items-center">
+        <i class="bi bi-map text-primary me-2"></i>
+        Viaje #{{ trip_data.id }}
+      </h3>
+      <small class="text-muted ms-4">
+        Detalle completo del viaje
+      </small>
+    </div>
+
+    <a class="btn btn-primary btn-sm shadow-sm" [routerLink]="['/trips/list']">
+      <i class="bi bi-arrow-left me-1"></i> Volver
+    </a>
+
+  </div>
+
+
+  <div *ngIf="loading" class="text-center py-5">
+    <c-spinner color="primary"></c-spinner>
+  </div>
+
+
+  <div class="card border-0 shadow-sm rounded-3 mb-4" *ngIf="!loading && trip_data">
+
+    <div class="card-header bg-white border-bottom">
+      <ul class="nav nav-tabs card-header-tabs align-items-center">
+
+        <li class="nav-item">
+          <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info">
+            <i class="bi bi-info-circle me-1"></i> Información
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#relations">
+            <i class="bi bi-diagram-3 me-1"></i> Relaciones
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#expenses">
+            <i class="bi bi-cash-stack me-1"></i> Gastos
+          </button>
+        </li>
+
+        <!-- Estado -->
+        <li class="nav-item ms-auto me-2">
+          <span class="badge text-uppercase" [ngClass]="trip_data.estado_viaje === 'EnRuta'
+                    ? 'bg-primary'
+                    : trip_data.estado_viaje === 'Finalizado'
+                      ? 'bg-danger'
+                      : 'bg-warning'">
+
+            {{ trip_data.estado_viaje === 'EnRuta'
+            ? 'En Ruta'
+            : trip_data.estado_viaje }}
+
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <div class="tab-content">
+
+        <div class="tab-pane fade show active" id="info">
+
+          <div class="row g-4">
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Factura</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-receipt"></i></span>
+                <input class="form-control" [value]="trip_data.factura || '-'" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Guía</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                <input class="form-control" [value]="trip_data.guia || '-'" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Fecha carga</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                <input class="form-control" [value]="trip_data.fecha_carga" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Empresa</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-building"></i></span>
+                <input class="form-control" [value]="trip_data.empresa" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Contacto</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input class="form-control" [value]="trip_data.contacto" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Teléfono</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                <input class="form-control" [value]="trip_data.telefono" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">RUC</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                <input class="form-control" [value]="trip_data.ruc" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Destino</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                <input class="form-control" [value]="trip_data.destino" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Carga</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
+                <input class="form-control" [value]="trip_data.carga" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Monto</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+                <input class="form-control" [value]="'$ ' + trip_data.monto_cobrar" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Estado pago</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                <input class="form-control" [value]="trip_data.estado_pago" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Fecha pago</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                <input class="form-control" [value]="trip_data.fecha_pago || '-'" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Entrega estimada</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-truck"></i></span>
+                <input class="form-control" [value]="trip_data.fecha_estimada_entrega" disabled>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Detalles</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-text-paragraph"></i></span>
+                <textarea class="form-control" rows="3" disabled>{{ trip_data.detalles }}</textarea>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Permisos</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
+                <textarea class="form-control" rows="3" disabled>{{ trip_data.permisos }}</textarea>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="tab-pane fade" id="relations">
+
+          <div class="row g-4">
+
+            <div class="col-md-4">
+              <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                  <i class="bi bi-truck fs-2 text-primary"></i>
+                  <h6 class="mt-2">{{ trip_data.vehicle?.placa }}</h6>
+                  <small class="text-muted">
+                    {{ trip_data.vehicle?.marca }} - {{ trip_data.vehicle?.modelo }}
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                  <i class="bi bi-person-badge fs-2 text-success"></i>
+
+                  <h6 class="mt-2">
+                    {{ trip_data.driver?.user?.name || 'Sin nombre' }}
+                  </h6>
+
+                  <small class="text-muted d-block">
+                    Licencia: {{ trip_data.driver?.numero_licencia }}
+                  </small>
+
+                  <small class="text-muted d-block">
+                    {{ trip_data.driver?.user?.email }}
+                  </small>
+
+                  <span class="badge mt-2" [ngClass]="{
+                    'bg-success': trip_data.driver?.estado_conductor === 'Activo',
+                    'bg-danger': trip_data.driver?.estado_conductor === 'Inactivo'
+                  }">
+                    {{ trip_data.driver?.estado_conductor | titlecase }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                  <i class="bi bi-box-seam fs-2 text-warning"></i>
+                  <h6 class="mt-2">{{ trip_data.car_body?.placa }}</h6>
+                  <small class="text-muted">
+                    Capacidad: {{ trip_data.car_body?.capacidad }}
+                  </small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="tab-pane fade" id="expenses">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Descripción</th>
+                  <th>Precio</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngIf="!trip_data.expenses || trip_data.expenses.length === 0">
+                  <td colspan="3" class="text-muted text-center">
+                    No hay gastos registrados
+                  </td>
+                </tr>
+
+                <tr *ngFor="let exp of trip_data.expenses; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ exp.descripcion }}</td>
+                  <td>S/. {{ exp.precio }}</td>
+                </tr>
+
+                <tr *ngIf="trip_data.expenses && trip_data.expenses.length > 0" class="fw-bold">
+                  <td>Total</td>
+                  <td></td>
+                  <td>S/. {{ totalPrecio }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

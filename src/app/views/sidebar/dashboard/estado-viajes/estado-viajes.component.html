@@ -1,0 +1,70 @@
+<!-- SPINNER -->
+<div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+<div class="card mb-4" *ngIf="!loading">
+
+    <div class="card-header">
+        <h4 class="mb-0">🚛 Estado de Viajes</h4>
+    </div>
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Conductor</th>
+                        <th>Vehículo</th>
+                        <th>Destino</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr *ngFor="let item of viajes; let i = index">
+
+                        <td>{{ i + 1 }}</td>
+
+                        <td>
+                            {{ item.conductor }}
+                        </td>
+
+                        <td>
+                            <span class="badge bg-dark">
+                                {{ item.vehiculo }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ item.destino }}
+                        </td>
+
+                        <td>
+                            {{ item.fecha | date:'yyyy-MM-dd' }}
+                        </td>
+
+                        <td>
+                            <span class="badge" [ngClass]="getEstadoClass(item.estado)">
+                                {{ formatEstado(item.estado) }}
+                            </span>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>

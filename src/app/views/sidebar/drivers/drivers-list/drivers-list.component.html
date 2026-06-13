@@ -1,0 +1,192 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+    [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+    [class.fade]="true" role="alert">
+
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ t.message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="container-fluid px-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-0">Conductores</h3>
+      <small class="text-muted">
+        Total: {{ driversData.total || 0 }} registros
+      </small>
+    </div>
+
+    <a class="btn btn-primary btn-sm shadow-sm" [routerLink]="['/drivers/create']">
+      <i class="bi bi-plus-lg me-1"></i> Nuevo Conductor
+    </a>
+  </div>
+
+  <!-- Card -->
+  <div class="card border-0 rounded-3">
+    <div class="card-body">
+
+      <!-- Paginación -->
+      <nav *ngIf="driversData" class="mt-4 mb-4">
+        <ul class="pagination pagination-sm justify-content-center">
+
+          <li class="page-item" [class.disabled]="driversData.current_page === 1">
+            <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">
+              « Primera
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let link of driversData.links" [class.active]="link.active"
+            [class.disabled]="!link.url">
+            <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+              [innerHTML]="link.label">
+            </a>
+          </li>
+
+          <li class="page-item" [class.disabled]="driversData.current_page === driversData.last_page">
+            <a class="page-link" href="#" (click)="goToPage(driversData.last_page); $event.preventDefault()">
+              Última »
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <!-- Tabla -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+
+          <thead class="table text-uppercase small">
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Licencia</th>
+              <th>N° Licencia</th>
+              <th>Estado</th>
+              <th>Examen</th>
+              <th>Vencimiento Licencia</th>
+              <th>Creado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <!-- Loading -->
+            <tr *ngIf="loading">
+              <td colspan="10" class="py-5">
+                <c-spinner color="primary"></c-spinner>
+                <div class="text-muted mt-2">Cargando conductores...</div>
+              </td>
+            </tr>
+
+            <!-- Data -->
+            <ng-container *ngIf="!loading && driver.length > 0">
+              <tr *ngFor="let d of driver">
+
+                <td class="fw-semibold">{{ d.id }}</td>
+
+                <!-- USER -->
+                <td>{{ d.user.name }}</td>
+                <td>{{ d.user.email }}</td>
+
+                <!-- DRIVER -->
+                <td>{{ d.licencia }}</td>
+                <td>{{ d.numero_licencia || '-' }}</td>
+
+                <!-- Estado conductor -->
+                <td>
+                  <span class="badge" [ngClass]="d.estado_conductor === 'Activo' ? 'bg-success' : 'bg-danger'">
+
+                    {{ d.estado_conductor }}
+                  </span>
+                </td>
+
+                <!-- Examen -->
+                <td>
+                  <span class="badge"
+                    [ngClass]="d.examen_medico_al_dia ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                    {{ d.examen_medico_al_dia ? 'Al día' : 'Vencido' }}
+                  </span>
+                </td>
+
+                <!-- Días -->
+                <td>{{ d.vencimiento_licencia | date:'short' }}</td>
+
+                <!-- Fecha -->
+                <td class="text-muted small">
+                  {{ d.created_at | date:'short' }}
+                </td>
+
+                <!-- Acciones -->
+                <td>
+                  <div class="btn-group btn-group-sm">
+
+                    <a class="btn btn-outline-secondary" [routerLink]="['/drivers/read', d.id]">
+                      <i class="bi bi-eye"></i>
+                    </a>
+
+                    <a class="btn btn-outline-primary" [routerLink]="['/drivers/update', d.id]">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <button class="btn btn-outline-danger" (click)="deleteDriver(d.id.toString())">
+                      <i class="bi bi-trash"></i>
+                    </button>
+
+                  </div>
+                </td>
+
+              </tr>
+            </ng-container>
+
+            <!-- Empty -->
+            <tr *ngIf="!loading && driver.length === 0">
+              <td colspan="10" class="py-5 text-center">
+                <i class="bi bi-inbox fs-2 text-muted"></i>
+                <div class="mt-2 text-muted">No hay conductores registrados</div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación (abajo) -->
+      <nav *ngIf="driversData" class="mt-4 mb-4">
+        <ul class="pagination pagination-sm justify-content-center">
+
+          <li class="page-item" [class.disabled]="driversData.current_page === 1">
+            <a class="page-link" href="#" (click)="goToPage(1); $event.preventDefault()">
+              « Primera
+            </a>
+          </li>
+
+          <li class="page-item" *ngFor="let link of driversData.links" [class.active]="link.active"
+            [class.disabled]="!link.url">
+            <a class="page-link" href="#" (click)="goToPage(link.page); $event.preventDefault()"
+              [innerHTML]="link.label">
+            </a>
+          </li>
+
+          <li class="page-item" [class.disabled]="driversData.current_page === driversData.last_page">
+            <a class="page-link" href="#" (click)="goToPage(driversData.last_page); $event.preventDefault()">
+              Última »
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+</div>

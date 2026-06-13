@@ -1,0 +1,658 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+
+    <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+        [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+        [class.fade]="true">
+
+        <div class="d-flex">
+
+            <div class="toast-body">
+                {{ t.message }}
+            </div>
+
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container-fluid mt-4">
+
+    <!-- LOADING -->
+    <div *ngIf="loadingData" class="text-center py-5">
+
+        <div class="spinner-border text-primary"></div>
+
+        <div class="mt-2">
+            Cargando vehículo...
+        </div>
+
+    </div>
+
+    <div *ngIf="!loadingData">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h3 class="fw-bold mb-1">
+
+                    <i class="bi bi-pencil-square text-primary me-2"></i>
+
+                    Actualizar Vehículo
+
+                </h3>
+
+                <small class="text-muted">
+                    Edita la información del vehículo
+                </small>
+
+            </div>
+
+            <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/vehicles/list']">
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Volver
+
+            </a>
+
+        </div>
+
+        <!-- CARD -->
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <form [formGroup]="form" (ngSubmit)="submit()">
+
+                    <div class="row g-4">
+
+                        <!-- PLACA -->
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Placa
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-upc-scan text-primary"></i>
+                                </span>
+
+                                <input type="text" class="form-control" formControlName="placa"
+                                    placeholder="Ingrese la placa"
+                                    [class.is-invalid]="form.get('placa')?.invalid && (form.get('placa')?.touched || form.get('placa')?.dirty)"
+                                    [class.is-valid]="placaValid === true">
+
+                                <span class="input-group-text" *ngIf="isCheckingPlaca">
+
+                                    <div class="spinner-border spinner-border-sm text-primary"></div>
+
+                                </span>
+
+                            </div>
+
+                            <div class="text-danger mt-1"
+                                *ngIf="form.get('placa')?.touched && form.get('placa')?.invalid">
+
+                                <div *ngIf="form.get('placa')?.hasError('required')">
+                                    Ingrese la placa
+                                </div>
+
+                                <div *ngIf="form.get('placa')?.hasError('minlength')">
+                                    Mínimo 6 caracteres
+                                </div>
+
+                                <div *ngIf="form.get('placa')?.hasError('maxlength')">
+                                    Máximo 7 caracteres
+                                </div>
+
+                                <div *ngIf="form.get('placa')?.hasError('pattern')">
+                                    Solo letras y números
+                                </div>
+
+                                <div *ngIf="form.get('placa')?.hasError('placaExistente')">
+                                    La placa ya existe
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- TIPO -->
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Tipo
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-truck text-primary"></i>
+                                </span>
+
+                                <input type="text" class="form-control" formControlName="tipo"
+                                    placeholder="Ingrese el tipo"
+                                    [class.is-invalid]="form.get('tipo')?.invalid && form.get('tipo')?.touched"
+                                    [class.is-valid]="form.get('tipo')?.valid && form.get('tipo')?.touched">
+
+                            </div>
+
+                            <small class="text-danger"
+                                *ngIf="form.get('tipo')?.hasError('required') && form.get('tipo')?.touched">
+
+                                El tipo es obligatorio
+
+                            </small>
+
+                        </div>
+
+                        <!-- MARCA -->
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Marca
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-award text-primary"></i>
+                                </span>
+
+                                <input type="text" class="form-control" formControlName="marca">
+
+                            </div>
+
+                        </div>
+
+                        <!-- MODELO -->
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Modelo
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-car-front text-primary"></i>
+                                </span>
+
+                                <input type="text" class="form-control" formControlName="modelo">
+
+                            </div>
+
+                        </div>
+
+                        <!-- AÑO -->
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                Año
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-calendar-event text-primary"></i>
+                                </span>
+
+                                <input type="number" class="form-control" formControlName="anio">
+
+                            </div>
+
+                        </div>
+
+                        <!-- EJES -->
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                Número de ejes
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-distribute-horizontal text-primary"></i>
+                                </span>
+
+                                <input type="number" class="form-control" formControlName="numero_ejes">
+
+                            </div>
+
+                        </div>
+
+                        <!-- CAPACIDAD -->
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+                                Capacidad de carga
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-box-seam text-primary"></i>
+                                </span>
+
+                                <input type="number" class="form-control" formControlName="capacidad_carga">
+
+                            </div>
+
+                        </div>
+
+                        <!-- GPS -->
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold d-block">
+                                Estado GPS
+                            </label>
+
+                            <div class="form-check form-switch mt-2">
+
+                                <input type="checkbox" class="form-check-input" id="gps"
+                                    [checked]="form.get('gps')?.value == 1"
+                                    (change)="form.get('gps')?.setValue($event.target.checked ? 1 : 0)">
+
+                                <label class="form-check-label fw-semibold" for="gps">
+
+                                    <span *ngIf="form.get('gps')?.value == 1" class="text-success">
+
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                        Activo
+
+                                    </span>
+
+                                    <span *ngIf="form.get('gps')?.value == 0" class="text-danger">
+
+                                        <i class="bi bi-x-circle-fill me-1"></i>
+                                        Inactivo
+
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <!-- PESO -->
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Peso seco
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-speedometer2 text-primary"></i>
+                                </span>
+
+                                <input type="number" class="form-control" formControlName="peso_seco">
+
+                            </div>
+
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Estado
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-clipboard-check text-primary"></i>
+                                </span>
+
+                                <select class="form-select" formControlName="estado_vehiculo">
+
+                                    <option value="" disabled selected>
+                                        Seleccione un estado
+                                    </option>
+
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <!-- OBSERVACIONES -->
+                        <div class="col-12">
+
+                            <label class="form-label fw-semibold">
+                                Observaciones
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-chat-left-text text-primary"></i>
+                                </span>
+
+                                <textarea rows="4" class="form-control" formControlName="observaciones"></textarea>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- SOATS -->
+                    <div class="mt-5">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <h5 class="fw-bold mb-0">
+                                SOATs
+                            </h5>
+
+                            <button type="button" class="btn btn-sm btn-primary" (click)="addSoat()">
+
+                                <i class="bi bi-plus-lg me-1"></i>
+                                Agregar
+
+                            </button>
+
+                        </div>
+
+                        <div class="table-responsive" formArrayName="soats">
+
+                            <table class="table table-hover align-middle text-center mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr>
+                                        <th>Fecha vencimiento</th>
+                                        <th>Estado</th>
+                                        <th width="100">Acción</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <tr *ngIf="soats.controls.length === 0">
+
+                                        <td colspan="3" class="text-muted py-3">
+                                            Sin SOATs registrados
+                                        </td>
+
+                                    </tr>
+
+                                    <tr *ngFor="let soat of soats.controls; let i = index" [formGroupName]="i">
+
+                                        <td class="text-start">
+
+                                            <div class="input-group input-group-sm">
+
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-calendar-x text-primary"></i>
+                                                </span>
+
+                                                <input type="date" class="form-control"
+                                                    formControlName="fecha_vencimiento"
+                                                    [class.is-invalid]="soat.get('fecha_vencimiento')?.invalid && soat.get('fecha_vencimiento')?.touched"
+                                                    [class.is-valid]="soat.get('fecha_vencimiento')?.valid && soat.get('fecha_vencimiento')?.touched">
+
+                                            </div>
+
+                                            <small class="text-danger"
+                                                *ngIf="soat.get('fecha_vencimiento')?.hasError('required') && soat.get('fecha_vencimiento')?.touched">
+
+                                                La fecha de vencimiento es obligatoria
+
+                                            </small>
+
+                                        </td>
+
+                                        <td class="text-start">
+
+                                            <div class="input-group input-group-sm">
+
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-shield-check text-primary"></i>
+                                                </span>
+
+                                                <select class="form-control" formControlName="estado"
+                                                    [class.is-invalid]="soat.get('estado')?.invalid && soat.get('estado')?.touched"
+                                                    [class.is-valid]="soat.get('estado')?.valid && soat.get('estado')?.touched">
+
+                                                    <option value="" disabled>
+                                                        Seleccione estado
+                                                    </option>
+
+                                                    <option [value]="'vigente'">
+                                                        Vigente
+                                                    </option>
+
+                                                    <option [value]="'vencido'">
+                                                        Vencido
+                                                    </option>
+
+                                                </select>
+
+                                            </div>
+
+                                            <small class="text-danger"
+                                                *ngIf="soat.get('estado')?.hasError('required') && soat.get('estado')?.touched">
+
+                                                El estado es obligatorio
+
+                                            </small>
+
+                                        </td>
+
+                                        <td>
+
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                (click)="removeSoat(i)">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                    <!-- MULTAS -->
+                    <div class="mt-5">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <h5 class="fw-bold mb-0">
+                                Multas
+                            </h5>
+
+                            <button type="button" class="btn btn-sm btn-primary" (click)="addFine()">
+
+                                <i class="bi bi-plus-lg me-1"></i>
+                                Agregar
+
+                            </button>
+
+                        </div>
+
+                        <div class="table-responsive" formArrayName="fines">
+
+                            <table class="table table-hover align-middle text-center mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr>
+                                        <th>Descripción</th>
+                                        <th>Monto</th>
+                                        <th>Pagada</th>
+                                        <th width="100">Acción</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    <tr *ngIf="fines.controls.length === 0">
+
+                                        <td colspan="4" class="text-muted py-3">
+                                            Sin multas registradas
+                                        </td>
+
+                                    </tr>
+
+                                    <tr *ngFor="let fine of fines.controls; let i = index" [formGroupName]="i">
+
+                                        <td class="text-start">
+
+                                            <div class="input-group input-group-sm">
+
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-file-earmark-text text-primary"></i>
+                                                </span>
+
+                                                <input type="text" class="form-control" formControlName="descripcion"
+                                                    [class.is-invalid]="fine.get('descripcion')?.invalid && fine.get('descripcion')?.touched"
+                                                    [class.is-valid]="fine.get('descripcion')?.valid && fine.get('descripcion')?.touched">
+
+                                            </div>
+
+                                            <small class="text-danger"
+                                                *ngIf="fine.get('descripcion')?.hasError('required') && fine.get('descripcion')?.touched">
+
+                                                La descripción es obligatoria
+
+                                            </small>
+
+                                        </td>
+
+                                        <td class="text-start">
+
+                                            <div class="input-group input-group-sm">
+
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-currency-dollar text-primary"></i>
+                                                </span>
+
+                                                <input type="number" class="form-control" formControlName="monto"
+                                                    [class.is-invalid]="fine.get('monto')?.invalid && fine.get('monto')?.touched"
+                                                    [class.is-valid]="fine.get('monto')?.valid && fine.get('monto')?.touched">
+
+                                            </div>
+
+                                            <small class="text-danger"
+                                                *ngIf="fine.get('monto')?.hasError('required') && fine.get('monto')?.touched">
+
+                                                El monto es obligatorio
+
+                                            </small>
+
+                                        </td>
+
+                                        <td class="text-start">
+
+                                            <div class="input-group input-group-sm">
+
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-cash-coin text-primary"></i>
+                                                </span>
+
+                                                <select class="form-control" formControlName="pagada"
+                                                    [class.is-invalid]="fine.get('pagada')?.invalid && fine.get('pagada')?.touched"
+                                                    [class.is-valid]="fine.get('pagada')?.valid && fine.get('pagada')?.touched">
+
+                                                    <option value="" disabled>
+                                                        Seleccione opción
+                                                    </option>
+
+                                                    <option [value]="1">
+                                                        Sí
+                                                    </option>
+
+                                                    <option [value]="0">
+                                                        No
+                                                    </option>
+
+                                                </select>
+
+                                            </div>
+
+                                            <small class="text-danger mt-1"
+                                                *ngIf="fine.get('pagada')?.hasError('required') && fine.get('pagada')?.touched">
+
+                                                El estado es obligatorio
+
+                                            </small>
+
+                                        </td>
+
+                                        <td>
+
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                (click)="removeFine(i)">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="d-flex justify-content-end mt-4 gap-2">
+
+                        <!-- <button type="button" class="btn btn-sm btn-outline-secondary" (click)="reset()">
+
+                            <i class="bi bi-eraser me-1"></i>
+                            Limpiar
+
+                        </button> -->
+
+                        <button type="submit" class="btn btn-primary btn-sm" [disabled]="loading">
+
+                            <i class="bi bi-save me-1"></i>
+
+                            {{ loading ? 'Guardando...' : 'Guardar' }}
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

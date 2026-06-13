@@ -1,0 +1,42 @@
+<!-- SPINNER -->
+<div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+<!-- CARD -->
+<div class="card shadow-sm" *ngIf="!loading">
+
+    <div class="card-header">
+        <h5 class="mb-0">📊 Resumen Estado de Viajes</h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3" *ngFor="let item of data">
+
+                <div class="card border-0 text-white bg-{{ getColor(item.estado_viaje) }}">
+
+                    <div class="card-body text-center">
+
+                        <h6 class="text-uppercase">
+                            {{ formatEstado(item.estado_viaje) }}
+                        </h6>
+
+                        <h2 class="fw-bold">
+                            {{ item.total }}
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

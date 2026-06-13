@@ -1,0 +1,150 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+    <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+        [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+        [class.fade]="true" role="alert">
+
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ t.message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="container-fluid mt-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-truck text-primary me-2"></i>
+                Crear Carrocería
+            </h3>
+            <small class="text-muted">
+                Registra una nueva carrocería en el sistema
+            </small>
+        </div>
+
+        <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/carbodies/list']">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+        </a>
+    </div>
+
+    <!-- Card -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <!-- Form -->
+            <form [formGroup]="form" (ngSubmit)="submit()">
+
+                <div class="row g-4">
+
+                    <!-- Placa -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Placa</label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-upc-scan text-primary"></i>
+                            </span>
+
+                            <input type="text" class="form-control" formControlName="placa"
+                                [class.is-invalid]="form.get('placa')?.invalid && (form.get('placa')?.touched || form.get('placa')?.dirty)"
+                                [class.is-valid]="placaValid === true" placeholder="Ingrese la placa">
+
+                            <!-- 🔥 LOADING -->
+                            <span class="input-group-text" *ngIf="isCheckingPlaca">
+                                <div class="spinner-border spinner-border-sm text-primary"></div>
+                            </span>
+
+                        </div>
+
+                        <!-- ERRORES -->
+                        <div class="text-danger mt-1" *ngIf="form.get('placa')?.touched && form.get('placa')?.invalid">
+
+                            <div *ngIf="form.get('placa')?.hasError('required')">
+                                Ingrese la placa
+                            </div>
+
+                            <div *ngIf="form.get('placa')?.hasError('minlength')">
+                                Mínimo 6 caracteres
+                            </div>
+
+                            <div *ngIf="form.get('placa')?.hasError('maxlength')">
+                                Máximo 7 caracteres
+                            </div>
+
+                            <div *ngIf="form.get('placa')?.hasError('pattern')">
+                                Solo letras y números
+                            </div>
+
+                            <div *ngIf="form.get('placa')?.hasError('placaExistente')">
+                                La placa ya existe
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Capacidad -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Capacidad</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-box-seam text-primary"></i>
+                            </span>
+                            <input type="number" class="form-control" formControlName="capacidad"
+                                placeholder="Ingrese la capacidad">
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Descripción</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-chat-left-text text-primary"></i>
+                            </span>
+                            <textarea class="form-control" rows="4" formControlName="descripcion"
+                                placeholder="Ingrese una descripción"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- ESTADO -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Estado</label>
+                        <select class="form-control" formControlName="estado_carbody">
+                            <option value="" disabled selected>
+                                Seleccione un estado
+                            </option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-end mt-4 gap-2">
+
+                    <button type="button" class="btn btn-outline-secondary" (click)="reset()">
+                        <i class="bi bi-eraser me-1"></i> Limpiar
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" [disabled]="loading">
+                        <i class="bi bi-save me-1"></i>
+                        {{ loading ? 'Guardando...' : 'Guardar' }}
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>

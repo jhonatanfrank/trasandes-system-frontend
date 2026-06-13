@@ -1,0 +1,357 @@
+<!-- TOAST -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+    <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+        [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+        [class.fade]="true" role="alert">
+
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ t.message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- LOADING -->
+<div *ngIf="loading" class="text-center py-5">
+    <c-spinner color="primary"></c-spinner>
+</div>
+
+<!-- FORM -->
+<div *ngIf="!loading" class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-map text-primary me-2"></i>
+                Actualizar Viaje
+            </h3>
+            <small class="text-muted">Edición de registro de viaje</small>
+        </div>
+
+        <a class="btn btn-outline-primary btn-sm shadow-sm" [routerLink]="['/trips/list']">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body">
+
+            <form [formGroup]="form">
+
+                <h6 class="fw-bold text-primary mb-3">
+                    <i class="bi bi-info-circle me-1"></i> Información del viaje
+                </h6>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Factura</label>
+
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">
+                                <i class="bi bi-receipt"></i>
+                            </span>
+                            <input type="text" class="form-control" formControlName="factura"
+                                [class.is-invalid]="form.get('factura')?.invalid && form.get('factura')?.touched"
+                                [class.is-valid]="form.get('factura')?.valid && form.get('factura')?.touched">
+                        </div>
+                        <small class="text-danger"
+                            *ngIf="form.get('factura')?.hasError('required') && form.get('factura')?.touched">
+                            La factura es obligatoria
+                        </small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Guía</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="bi bi-upc"></i></span>
+                            <input type="text" class="form-control" formControlName="guia">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha carga</label>
+                        <input type="date" class="form-control form-control-sm" formControlName="fecha_carga">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Empresa</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="empresa">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Contacto</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="contacto">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="telefono">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">RUC</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="ruc">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Destino</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="destino">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Carga</label>
+                        <input type="text" class="form-control form-control-sm" formControlName="carga">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Conductor</label>
+
+                        <div class="input-group input-group-sm">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-truck"></i>
+                            </span>
+
+                            <select class="form-select" formControlName="conductor_id"
+                                [class.is-invalid]="form.get('conductor_id')?.invalid && form.get('conductor_id')?.touched"
+                                [class.is-valid]="form.get('conductor_id')?.valid && form.get('conductor_id')?.touched">
+
+                                <option [ngValue]="null">
+                                    {{ loadingDrivers ? 'Cargando conductores...' : 'Seleccione conductor' }}
+                                </option>
+
+                                <option *ngFor="let d of drivers" [ngValue]="d.id"  [disabled]="d.deleted_at">
+                                    {{ d.name || ('Conductor #' + d.id) }}
+                                    <span *ngIf="d.deleted_at"> (Eliminado)</span>
+                                </option>
+
+                            </select>
+
+                            <!-- SPINNER -->
+                            <span *ngIf="loadingDrivers" class="input-group-text bg-white">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            </span>
+
+                        </div>
+
+                        <small class="text-danger"
+                            *ngIf="form.get('conductor_id')?.hasError('required') && form.get('conductor_id')?.touched">
+
+                            El conductor es obligatorio
+
+                        </small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Vehículo</label>
+
+                        <div class="input-group input-group-sm">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-truck"></i>
+                            </span>
+
+                            <select class="form-select" formControlName="vehiculo_id"
+                                [style.cursor]="loadingVehicles ? 'wait' : 'pointer'"
+                                [class.is-invalid]="form.get('vehiculo_id')?.invalid && form.get('vehiculo_id')?.touched"
+                                [class.is-valid]="form.get('vehiculo_id')?.valid && form.get('vehiculo_id')?.touched">
+
+                                <option [ngValue]="null">
+                                    {{ loadingVehicles ? 'Cargando vehículos...' : 'Seleccione vehículo' }}
+                                </option>
+
+                                <option *ngFor="let v of vehicles" [ngValue]="v.id" [disabled]="v.deleted_at">
+                                    {{ v.placa || ('Vehículo #' + v.id) }}
+                                    <span *ngIf="v.deleted_at"> (Eliminado)</span>
+                                </option>
+
+                            </select>
+
+                            <!-- SPINNER -->
+                            <span *ngIf="loadingVehicles" class="input-group-text bg-white">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            </span>
+
+                        </div>
+
+                        <small class="text-danger"
+                            *ngIf="form.get('vehiculo_id')?.hasError('required') && form.get('vehiculo_id')?.touched">
+
+                            El vehículo es obligatorio
+
+                        </small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Carrocería</label>
+
+                        <div class="input-group input-group-sm">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-tools"></i>
+                            </span>
+
+                            <select class="form-select" formControlName="carroceria_id"
+                                [style.cursor]="loadingCarbodies ? 'wait' : 'pointer'"
+                                [class.is-invalid]="form.get('carroceria_id')?.invalid && form.get('carroceria_id')?.touched"
+                                [class.is-valid]="form.get('carroceria_id')?.valid && form.get('carroceria_id')?.touched">
+
+                                <option [ngValue]="null">
+                                    {{ loadingCarbodies ? 'Cargando carrocerías...' : 'Seleccione carrocería' }}
+                                </option>
+
+                                <option *ngFor="let c of carbodies" [ngValue]="c.id" [disabled]="c.deleted_at">
+                                    {{ c.placa || ('Carrocería #' + c.id) }}
+                                    <span *ngIf="c.deleted_at"> (Eliminado)</span>
+                                </option>
+
+                            </select>
+
+                            <!-- SPINNER -->
+                            <span *ngIf="loadingCarbodies" class="input-group-text bg-white">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            </span>
+
+                        </div>
+
+                        <small class="text-danger"
+                            *ngIf="form.get('carroceria_id')?.hasError('required') && form.get('carroceria_id')?.touched">
+
+                            La carrocería es obligatoria
+
+                        </small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Monto</label>
+                        <input type="number" class="form-control form-control-sm" formControlName="monto_cobrar">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Estado pago</label>
+                        <select class="form-select form-select-sm" formControlName="estado_pago">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Pagado">Pagado</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha pago</label>
+                        <input type="date" class="form-control form-control-sm" formControlName="fecha_pago">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Entrega estimada</label>
+                        <input type="date" class="form-control form-control-sm"
+                            formControlName="fecha_estimada_entrega">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select form-select-sm" formControlName="estado_viaje">
+                            <option value="" disabled>Seleccione...</option>
+                            <option value="EnRuta">EN RUTA</option>
+                            <option value="Finalizado">FINALIZADO</option>
+                            <option value="Retrasado">RETRASADO</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Detalles</label>
+                        <textarea class="form-control" rows="3" formControlName="detalles"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Permisos</label>
+                        <textarea class="form-control" rows="3" formControlName="permisos"></textarea>
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold text-primary mb-0">Gastos</h6>
+                    <button type="button" class="btn btn-success btn-sm text-white" (click)="addExpense()">
+                        <i class="bi bi-plus-lg me-1"></i> Agregar
+                    </button>
+                </div>
+                <div class="table-responsive" formArrayName="expenses">
+
+                    <table class="table table-hover align-middle text-center mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th width="100">Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr *ngIf="expenses.controls.length === 0">
+                                <td colspan="3" class="text-muted py-3">
+                                    Sin gastos registrados
+                                </td>
+                            </tr>
+
+                            <tr *ngFor="let exp of expenses.controls; let i = index" [formGroupName]="i">
+
+                                <td class="text-start">
+                                    <input class="form-control form-control-sm" formControlName="descripcion"
+                                        [class.is-invalid]="exp.get('descripcion')?.invalid && exp.get('descripcion')?.touched"
+                                        [class.is-valid]="exp.get('descripcion')?.valid && exp.get('descripcion')?.touched">
+
+                                    <small class="text-danger"
+                                        *ngIf="exp.get('descripcion')?.hasError('required') && exp.get('descripcion')?.touched">
+                                        La descripción es obligatoria
+                                    </small>
+                                </td>
+
+                                <td class="text-start">
+                                    <input type="number" class="form-control form-control-sm" formControlName="precio"
+                                        [class.is-invalid]="exp.get('precio')?.invalid && exp.get('precio')?.touched"
+                                        [class.is-valid]="exp.get('precio')?.valid && exp.get('precio')?.touched">
+
+                                    <small class="text-danger"
+                                        *ngIf="exp.get('precio')?.hasError('required') && exp.get('precio')?.touched">
+                                        El precio es obligatorio
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                        (click)="removeExpense(i)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+                            <tr *ngIf="expenses.controls.length > 0" class="fw-bold border-top table-light">
+                                <td>Total</td>
+                                <td></td>
+                                <td>S/. {{ totalPrecio }}</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="text-end mt-3 mb-4">
+        <button class="btn btn-primary btn-sm px-4" (click)="save()">
+            Actualizar
+        </button>
+    </div>
+
+</div>

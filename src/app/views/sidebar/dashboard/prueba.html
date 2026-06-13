@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Transporte</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            display: flex;
+            color: #1e293b;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #0f172a;
+            color: white;
+            padding: 25px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 40px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            padding: 14px 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .sidebar ul li:hover {
+            background: #1e293b;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        /* HEADER */
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #64748b;
+        }
+
+        /* KPI CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+
+        .card h3 {
+            font-size: 15px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .card .number {
+            font-size: 34px;
+            font-weight: bold;
+        }
+
+        .card .extra {
+            margin-top: 10px;
+            color: #16a34a;
+            font-size: 14px;
+        }
+
+        /* ALERTAS */
+
+        .alerts {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+
+        .alerts h2 {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .red {
+            background: #ef4444;
+        }
+
+        .orange {
+            background: #f59e0b;
+        }
+
+        /* GRID */
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* CHART */
+
+        .chart {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+
+        .chart h2 {
+            margin-bottom: 20px;
+        }
+
+        .fake-chart {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+        .bar {
+            width: 60px;
+            background: #3b82f6;
+            border-radius: 10px 10px 0 0;
+            position: relative;
+        }
+
+        .bar span {
+            position: absolute;
+            bottom: -25px;
+            left: 10px;
+        }
+
+        /* TABLE */
+
+        .table-box {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+            overflow: auto;
+        }
+
+        .table-box h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            text-align: left;
+            background: #f1f5f9;
+            padding: 14px;
+            font-size: 14px;
+        }
+
+        table td {
+            padding: 14px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 6px 10px;
+            border-radius: 30px;
+            color: white;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .status.red {
+            background: #ef4444;
+        }
+
+        .status.orange {
+            background: #f59e0b;
+        }
+
+        .status.green {
+            background: #22c55e;
+        }
+
+        /* SMALL CARDS */
+
+        .small-cards {
+            display: grid;
+            gap: 20px;
+        }
+
+        .small-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+
+        .small-card h3 {
+            margin-bottom: 15px;
+        }
+
+        .small-card ul {
+            list-style: none;
+        }
+
+        .small-card li {
+            margin-bottom: 10px;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:1000px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media(max-width:800px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <h2>🚛 Transportes</h2>
+
+        <ul>
+            <li>🏠 Dashboard</li>
+            <li>🚛 Viajes</li>
+            <li>👨 Conductores</li>
+            <li>🚚 Vehículos</li>
+            <li>💰 Finanzas</li>
+            <li>📄 Facturación</li>
+            <li>⚠️ Alertas</li>
+            <li>📊 Reportes</li>
+            <li>⚙️ Configuración</li>
+        </ul>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="main">
+
+        <!-- HEADER -->
+
+        <div class="header">
+            <h1>Dashboard General</h1>
+            <p>Resumen operativo y financiero - Mayo 2026</p>
+        </div>
+
+        <!-- KPI CARDS -->
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Conductores</h3>
+                <div class="number">24</div>
+                <div class="extra">22 activos</div>
+            </div>
+
+            <div class="card">
+                <h3>Vehículos</h3>
+                <div class="number">18</div>
+                <div class="extra">15 operativos</div>
+            </div>
+
+            <div class="card">
+                <h3>Viajes del Mes</h3>
+                <div class="number">146</div>
+                <div class="extra">+12% este mes</div>
+            </div>
+
+            <div class="card">
+                <h3>Ingresos</h3>
+                <div class="number">S/ 84K</div>
+                <div class="extra">+18% vs abril</div>
+            </div>
+
+        </div>
+
+        <!-- ALERTAS -->
+
+        <div class="alerts">
+
+            <h2>⚠️ Alertas Críticas</h2>
+
+            <div class="alert red">
+                🔴 3 licencias vencidas
+            </div>
+
+            <div class="alert orange">
+                🟠 5 licencias vencen en menos de 30 días
+            </div>
+
+            <div class="alert red">
+                🔴 2 SOAT vencidos
+            </div>
+
+            <div class="alert orange">
+                🟠 S/ 18,500 pendientes de cobro
+            </div>
+
+        </div>
+
+        <!-- GRID -->
+
+        <div class="grid">
+
+            <!-- CHART -->
+
+            <div class="chart">
+
+                <h2>📈 Viajes por Mes</h2>
+
+                <div class="fake-chart">
+
+                    <div class="bar" style="height:120px;">
+                        <span>Ene</span>
+                    </div>
+
+                    <div class="bar" style="height:160px;">
+                        <span>Feb</span>
+                    </div>
+
+                    <div class="bar" style="height:190px;">
+                        <span>Mar</span>
+                    </div>
+
+                    <div class="bar" style="height:230px;">
+                        <span>Abr</span>
+                    </div>
+
+                    <div class="bar" style="height:270px;">
+                        <span>May</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- SMALL CARDS -->
+
+            <div class="small-cards">
+
+                <div class="small-card">
+
+                    <h3>🚛 Viajes Hoy</h3>
+
+                    <ul>
+                        <li>12 programados</li>
+                        <li>4 en ruta</li>
+                        <li>3 entregados</li>
+                        <li>1 retrasado</li>
+                    </ul>
+
+                </div>
+
+                <div class="small-card">
+
+                    <h3>💰 Finanzas</h3>
+
+                    <ul>
+                        <li>Ingresos: S/ 84,250</li>
+                        <li>Gastos: S/ 41,800</li>
+                        <li>Ganancia: S/ 42,450</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TABLE LICENCIAS -->
+
+        <div class="table-box">
+
+            <h2>👨‍✈️ Licencias por Vencer</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Conductor</th>
+                        <th>Licencia</th>
+                        <th>Fecha Vencimiento</th>
+                        <th>Días Restantes</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Juan Pérez</td>
+                        <td>A3C</td>
+                        <td>2026-06-02</td>
+                        <td>13 días</td>
+                        <td>
+                            <span class="status orange">ALERTA</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Carlos Ruiz</td>
+                        <td>A2B</td>
+                        <td>2026-05-25</td>
+                        <td>5 días</td>
+                        <td>
+                            <span class="status red">URGENTE</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Luis Torres</td>
+                        <td>A3A</td>
+                        <td>2026-05-18</td>
+                        <td>Vencida</td>
+                        <td>
+                            <span class="status red">VENCIDA</span>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <br><br>
+
+        <!-- TABLE VIAJES -->
+
+        <div class="table-box">
+
+            <h2>🚚 Viajes en Ruta</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Conductor</th>
+                        <th>Vehículo</th>
+                        <th>Destino</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>#245</td>
+                        <td>Juan Pérez</td>
+                        <td>ABC-123</td>
+                        <td>Arequipa</td>
+                        <td>20/05/2026</td>
+                        <td>
+                            <span class="status green">EN RUTA</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>#246</td>
+                        <td>Marco Díaz</td>
+                        <td>XTZ-888</td>
+                        <td>Cusco</td>
+                        <td>20/05/2026</td>
+                        <td>
+                            <span class="status orange">PENDIENTE</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>#247</td>
+                        <td>Luis Torres</td>
+                        <td>LMO-741</td>
+                        <td>Piura</td>
+                        <td>19/05/2026</td>
+                        <td>
+                            <span class="status red">RETRASADO</span>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <br><br>
+
+        <!-- TABLE PAGOS -->
+
+        <div class="table-box">
+
+            <h2>💳 Pagos Pendientes</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Empresa</th>
+                        <th>Factura</th>
+                        <th>Monto</th>
+                        <th>Fecha Pago</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Alicorp</td>
+                        <td>F001-8821</td>
+                        <td>S/ 5,200</td>
+                        <td>10/05/2026</td>
+                        <td>
+                            <span class="status red">ATRASADO</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Gloria</td>
+                        <td>F001-8829</td>
+                        <td>S/ 8,100</td>
+                        <td>22/05/2026</td>
+                        <td>
+                            <span class="status orange">PENDIENTE</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Backus</td>
+                        <td>F001-8835</td>
+                        <td>S/ 3,800</td>
+                        <td>28/05/2026</td>
+                        <td>
+                            <span class="status green">AL DÍA</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

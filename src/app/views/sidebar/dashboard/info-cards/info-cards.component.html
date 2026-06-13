@@ -1,0 +1,38 @@
+<!-- SPINNER -->
+<div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+<!-- CARDS -->
+<div class="row g-3 mb-4" *ngIf="!loading">
+
+    <div class="col-12 col-md-6 col-xl-3" *ngFor="let card of cards; let i = index">
+
+        <div class="card shadow-sm border-2 h-100" [ngClass]="getCardClass(i)">
+
+            <div class="card-body">
+
+                <!-- Título -->
+                <h6 class="text-muted mb-2">
+                    {{ card.concepto }}
+                </h6>
+
+                <!-- Número -->
+                <div class="fs-3 fw-bold" [ngClass]="getTextClass(i)">
+                    {{ card.total }}
+                </div>
+
+                <!-- Detalle -->
+                <div class="text-muted small mt-1">
+                    {{ card.detalle }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

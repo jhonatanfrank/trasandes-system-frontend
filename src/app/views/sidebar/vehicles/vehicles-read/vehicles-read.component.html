@@ -1,0 +1,255 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+  <div *ngFor="let t of toasts" class="toast align-items-center text-white border-0 mb-2"
+    [class.bg-success]="t.type === 'success'" [class.bg-danger]="t.type === 'error'" [class.show]="t.visible"
+    [class.fade]="true" role="alert">
+
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ t.message }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="t.visible = false">
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="container-fluid mt-4">
+
+  <div *ngIf="!loading && vehicle_data" class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-1">
+        <i class="bi bi-truck text-primary me-2"></i>
+
+        {{ vehicle_data.placa }}
+
+      </h3>
+      <small class="text-muted">
+        Detalle completo del vehículo
+      </small>
+    </div>
+
+    <a class="btn btn-primary btn-sm shadow-sm" [routerLink]="['/vehicles/list']">
+      <i class="bi bi-arrow-left me-1"></i> Volver
+    </a>
+
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <c-spinner color="primary"></c-spinner>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-3 mb-4" *ngIf="!loading && vehicle_data">
+
+    <div class="card-header bg-white border-bottom">
+      <ul class="nav nav-tabs card-header-tabs">
+
+        <li class="nav-item">
+          <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info">
+            <i class="bi bi-info-circle me-1"></i> Información
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#documents">
+            <i class="bi bi-file-earmark-text me-1"></i> Documentos
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fines">
+            <i class="bi bi-exclamation-triangle me-1"></i> Multas
+          </button>
+        </li>
+
+        <li class="nav-item ms-auto me-2">
+          <span class="badge ms-2 text-uppercase"
+            [ngClass]="vehicle_data.estado_vehiculo === 'Activo'? 'bg-success': 'bg-danger'">
+            {{ vehicle_data.estado_vehiculo }}
+          </span>
+        </li>
+
+      </ul>
+    </div>
+
+    <div class="card-body">
+      <div class="tab-content">
+
+        <div class="tab-pane fade show active" id="info">
+          <div class="row g-4">
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Placa</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-upc-scan text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="vehicle_data.placa" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Tipo</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-truck-front text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="vehicle_data.tipo" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Marca</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-building text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="vehicle_data.marca" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Modelo</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-gear text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="vehicle_data.modelo" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Año</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-calendar text-primary"></i>
+                </span>
+                <input type="number" class="form-control" [value]="vehicle_data.anio" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">GPS</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-geo-alt text-primary"></i>
+                </span>
+                <input type="text" class="form-control" [value]="vehicle_data.gps ? 'Activo' : 'Inactivo'" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Número de ejes</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-diagram-3 text-primary"></i>
+                </span>
+                <input type="number" class="form-control" [value]="vehicle_data.numero_ejes" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Capacidad carga</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-box-seam text-primary"></i>
+                </span>
+                <input type="number" class="form-control" [value]="vehicle_data.capacidad_carga" disabled>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Peso seco</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-speedometer text-primary"></i>
+                </span>
+                <input type="number" class="form-control" [value]="vehicle_data.peso_seco" disabled>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Observaciones</label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-chat-left-text text-primary"></i>
+                </span>
+                <textarea class="form-control" rows="4" disabled>{{ vehicle_data.observaciones }}</textarea>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="documents">
+
+          <h6 class="fw-bold mb-3">
+            <i class="bi bi-shield-check me-1 text-primary"></i>
+            SOAT
+          </h6>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-light">
+                <tr>
+                  <th>Fecha Vencimiento</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="!vehicle_data.soats || vehicle_data.soats.length === 0">
+                  <td colspan="2" class="text-center text-muted">
+                    No hay SOAT registrados
+                  </td>
+                </tr>
+                <tr *ngFor="let soat of vehicle_data.soats">
+                  <td>{{ soat.fecha_vencimiento }}</td>
+                  <td>
+                    <span class="badge rounded-pill" [ngClass]="soat.estado === 'vigente' ? 'bg-success' : 'bg-danger'">
+                      {{ soat.estado | titlecase }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="tab-pane fade" id="fines">
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle text-center">
+              <thead class="table-light">
+                <tr>
+                  <th>Descripción</th>
+                  <th>Monto</th>
+                  <th>Pagada</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="!vehicle_data.fines || vehicle_data.fines.length === 0">
+                  <td colspan="3" class="text-center text-muted">
+                    No hay multas registradas
+                  </td>
+                </tr>
+                <tr *ngFor="let fine of vehicle_data.fines">
+                  <td>{{ fine.descripcion }}</td>
+                  <td>$ {{ fine.monto }}</td>
+                  <td>
+                    <span class="badge rounded-pill" [ngClass]="fine.pagada ? 'bg-success' : 'bg-danger'">
+                      {{ fine.pagada ? 'Si' : 'No' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
