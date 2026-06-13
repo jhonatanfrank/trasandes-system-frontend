@@ -286,4 +286,5 @@ There is only one limitation you can't re-distribute the CoreUI as stock. You ca
 persons who tried to sell CoreUI based templates.
 #   t r a s a n d e s - s y s t e m - f r o n t e n d  
  #   t r a s a n d e s - s y s t e m - f r o n t e n d  
+ #   t r a s a n d e s - s y s t e m - f r o n t e n d  
  
