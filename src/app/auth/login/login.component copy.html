@@ -24,8 +24,7 @@
             <form #loginForm="ngForm" (ngSubmit)="login()" class="needs-validation" novalidate autocomplete="off">
               <div class="mb-3">
                 <label class="mb-2 text-muted" for="email">E-Mail</label>
-                <input [(ngModel)]="user" id="email" type="email" class="form-control"
-                  [ngClass]="{ 'is-invalid': emailRef.invalid && emailRef.touched }" name="email" required email
+                <input [(ngModel)]="user" id="email" type="email" class="form-control" name="email" required email
                   #emailRef="ngModel">
 
                 <div class="invalid-feedback" *ngIf="emailRef.invalid && emailRef.touched">
@@ -38,9 +37,8 @@
                   <label class="text-muted" for="password">Contraseña</label>
                 </div>
 
-                <input [(ngModel)]="password" id="password" type="password" class="form-control"
-                  [ngClass]="{ 'is-invalid': passRef.invalid && passRef.touched }" name="password" required
-                  minlength="1" #passRef="ngModel">
+                <input [(ngModel)]="password" id="password" type="password" class="form-control" name="password"
+                  required minlength="1" #passRef="ngModel">
 
                 <div class="invalid-feedback" *ngIf="passRef.invalid && passRef.touched">
                   La contraseña es obligatoria

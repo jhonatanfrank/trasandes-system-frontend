@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, NgStyle } from '@angular/common';
 import { IconDirective } from '@coreui/icons-angular';
 import {
@@ -26,9 +26,9 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
   ],
 })
-export class LoginComponent {
-  user: string = '';
-  password: string = '';
+export class LoginComponent implements OnInit {
+  user: string = 'superadmin@example.com';
+  password: string = '123123123';
   isLoading: boolean = false;
 
   toastMessage: string = '';
@@ -37,7 +37,11 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) { }
 
+  ngOnInit(): void { }
+
   login(): void {
+    // console.log('Usuario:', this.user);
+    // console.log('Password:', this.password);
     if (this.isLoading) return;
 
     this.isLoading = true;
