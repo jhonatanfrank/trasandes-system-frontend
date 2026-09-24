@@ -69,6 +69,7 @@ export interface CarBody {
   capacidad: number;
   descripcion: string | null;
   estado_carbody: string | null;
+  imagen: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

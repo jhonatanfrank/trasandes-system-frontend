@@ -69,6 +69,7 @@
           <thead class="table text-uppercase small">
             <tr>
               <th>#</th>
+              <th>Imagen</th>
               <th>Placa</th>
               <th>Capacidad</th>
               <th>Descripción</th>
@@ -88,13 +89,19 @@
                 <div class="text-muted mt-2">Cargando carrocerías...</div>
               </td>
             </tr>
-
             <!-- Data -->
             <ng-container *ngIf="!loading && carbodies.length > 0">
               <tr *ngFor="let carbody of carbodies" class="table-row">
 
                 <td class="fw-semibold">{{ carbody.id }}</td>
+                <td>
+                  <img *ngIf="carbody.imagen" [src]="getImageUrl(carbody.imagen)" alt="carbody" width="70" height="50"
+                    class="rounded border" style="object-fit: cover;" />
 
+                  <span *ngIf="!carbody.imagen" class="text-muted small">
+                    Sin imagen
+                  </span>
+                </td>
                 <td>
                   <span class="badge bg-light text-dark border">
                     {{ carbody.placa }}

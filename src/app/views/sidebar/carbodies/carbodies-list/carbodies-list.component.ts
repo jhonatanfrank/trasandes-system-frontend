@@ -23,6 +23,8 @@ export class CarbodiesListComponent implements OnInit {
   loading: boolean = true;
   currentPage: number = 1;
 
+  private baseImageUrl = 'http://localhost:8000/storage';
+
   ngOnInit(): void {
     this.load_carbody_pagination(1);
   }
@@ -61,6 +63,12 @@ export class CarbodiesListComponent implements OnInit {
         }
       });
     }
+  }
+
+  /* 🔥 Imagen helper */
+  getImageUrl(path: string | null): string | null {
+    if (!path) return null;
+    return `${this.baseImageUrl}/${path}`;
   }
 
   /* Toast */

@@ -9,7 +9,8 @@ export const navItems: CustomNavData[] = [
 
   {
     name: 'Dashboard',
-    title: true
+    title: true,
+    permission: 'dashboard',
   },
   {
     name: 'Dashboard',
@@ -18,7 +19,8 @@ export const navItems: CustomNavData[] = [
     permission: 'dashboard',
   }, {
     name: 'Roles y Permisos',
-    title: true
+    title: true,
+    permission: 'list_role',
   },
   {
     name: 'Roles y Permisos',
@@ -42,7 +44,8 @@ export const navItems: CustomNavData[] = [
   },
   {
     name: 'Módulo',
-    title: true
+    title: true,
+    permission: 'list_module',
   },
   {
     name: 'Vehículos',

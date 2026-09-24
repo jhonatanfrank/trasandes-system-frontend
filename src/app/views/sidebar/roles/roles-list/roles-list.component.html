@@ -77,12 +77,16 @@
                                         <c-icon name="cil-align-left"></c-icon>
                                     </a>
                                     <a *ngIf="canUpdateRole" cButton color="primary" size="sm" variant="outline"
-                                        [routerLink]="['/roles/update', role.id]">
+                                        [class.disabled]="role.name === 'Super-Admin'"
+                                        [attr.aria-disabled]="role.name === 'Super-Admin'"
+                                        [routerLink]="role.name !== 'Super-Admin' ? ['/roles/update', role.id] : null">
                                         <c-icon name="cil-pencil"></c-icon>
                                     </a>
                                     <a *ngIf="canDeleteRole" type="button"
                                         class="btn btn-outline-danger btn-sm btn-delete" title="Eliminar"
-                                        (click)="deleteRoles(role.id?.toString() || '')">
+                                        [class.disabled]="role.name === 'Super-Admin'"
+                                        [attr.aria-disabled]="role.name === 'Super-Admin'"
+                                        (click)="role.name !== 'Super-Admin' && deleteRoles(role.id?.toString() || '')">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </c-button-group>
